@@ -2,10 +2,13 @@ import Express from "express";
 import { createServer } from "node:http";
 import path from "node:path";
 import { Server } from "socket.io";
+import { mongoConnection } from "./mongo";
 
 const express = Express();
 
 const server = createServer(express);
+
+mongoConnection();
 
 express.use(Express.static(path.join(__dirname, "..", "public")));
 
