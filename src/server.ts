@@ -1,9 +1,4 @@
-import express from "express";
-
-const server = express();
-
-server.get("/", (_, response) => {
-  return response.json({ message: "Hello World!" });
-});
+import { server } from "./http";
+import "./websocket/chat.service";
 
 server.listen(8080, () => console.log("🚀 Server running on port 8080."));
