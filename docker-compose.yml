@@ -1,0 +1,36 @@
+# To execute docker-compose in real-time: docker-compose up
+# To execute docker-compose in background: docker-compose up -d
+# To see logs: docker logs rentx -f
+
+# To execute and recreate: docker-compose up --force-recreate
+version: "3"
+
+services:
+  app:
+    build: .
+    container_name: chatsocket-app
+    networks:
+      - chatsocket-network
+    volumes:
+      - .:/usr/src/app
+    tty: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: chatsocket-mongodb
+    image: mongo
+    restart: always
+    tty: true
+    volumes:
+      - ./.docker/mongodb:/data/db
+    networks:
+      - chatsocket-network
+    ports:
+      - "27017:27017"
+
+networks:
+  chatsocket-network:
+    driver: bridge
