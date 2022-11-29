@@ -22,6 +22,9 @@ export class CreateUserService {
             avatar,
             name,
           },
+        },
+        {
+          new: true,
         }
       );
 
