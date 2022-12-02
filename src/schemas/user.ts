@@ -11,7 +11,11 @@ const UserSchema = new Schema(
   {
     name: String,
     email: String,
-    avatar: String,
+    avatar: {
+      type: String,
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5PeYVK0G3wYyUbYfLZkbL3KWBVPPYe5WQPg&usqp=CAU",
+    },
     socket_id: String,
   },
   { versionKey: false }

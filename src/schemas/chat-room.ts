@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import mongoose, { Document, Schema } from "mongoose";
 
 type ChatRoom = Document & {
-  users_id: objectId[];
+  users: string[];
   chat_room_id: String;
 };
 
