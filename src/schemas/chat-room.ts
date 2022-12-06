@@ -16,7 +16,7 @@ const ChatRoomSchema = new Schema(
     ],
     chat_room_id: {
       type: String,
-      default: randomUUID({}),
+      default: randomUUID(),
     },
   },
   { versionKey: false }

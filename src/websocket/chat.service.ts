@@ -5,6 +5,7 @@ import { CreateMessageService } from "../services/create-message.service";
 import { CreateUserService } from "../services/create-user.service";
 import { GetAllUsersService } from "../services/get-all-users.service";
 import { GetChatRoomByUsersService } from "../services/get-chat-room-by-users.service";
+import { GetMessagesByChatRoomService } from "../services/get-messages-by-chat-room.service";
 import { GetUserBySocketIdService } from "../services/get-user-by-socket-id.service";
 
 type UserParams = {
@@ -62,6 +63,9 @@ io.on("connect", (socket) => {
     const getChatRoomByUsersService = container.resolve(
       GetChatRoomByUsersService
     );
+    const getMessagesByChatRoomService = container.resolve(
+      GetMessagesByChatRoomService
+    );
 
     const userLogged = await getUserBySocketIdService.execute({
       socket_id: socket.id,
@@ -77,12 +81,15 @@ io.on("connect", (socket) => {
       });
     }
 
+    const messages = await getMessagesByChatRoomService.execute({
+      room_id: room.chat_room_id,
+    });
+
     /**
      * Para unir os usuários em uma sala.
      */
     socket.join(room.chat_room_id);
-
-    callback(room);
+    callback({ room, messages });
   });
 
   socket.on("message", async (data) => {
@@ -98,13 +105,13 @@ io.on("connect", (socket) => {
     const message = await createMessageService.execute({
       to: user._id,
       text: data.message,
-      room_id: data.idChatRoom,
+      room_id: data.chat_room_id,
     });
 
     /**
      * Para enviar a mensagem para os demais usuários da conexão.
      */
-    io.to(data.idChatRoom).emit("message", {
+    io.to(data.chat_room_id).emit("message", {
       message,
       user,
     });

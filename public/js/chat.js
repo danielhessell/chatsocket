@@ -1,5 +1,5 @@
 const socket = io("http://localhost:8080");
-let idChatRoom = "";
+let chat_room_id = "";
 
 function onLoad() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -39,13 +39,14 @@ function onLoad() {
   });
 
   socket.on("message", (data) => {
-    if (data.message.roomId === idChatRoom) {
+    console.log("message", data);
+    if (data.message.room_id === chat_room_id) {
       addMessage(data);
     }
   });
 
   socket.on("notification", (data) => {
-    if (data.roomId !== idChatRoom) {
+    if (data.room_id !== chat_room_id) {
       const user = document.getElementById(`user_${data.from._id}`);
 
       user.insertAdjacentHTML(
@@ -117,7 +118,7 @@ document.getElementById("users_list").addEventListener("click", (e) => {
     }
 
     socket.emit("start_chat", { idUser }, (response) => {
-      idChatRoom = response.room.idChatRoom;
+      chat_room_id = response.room.chat_room_id;
 
       response.messages.forEach((message) => {
         const data = {
@@ -139,7 +140,7 @@ document.getElementById("user_message").addEventListener("keypress", (e) => {
 
     const data = {
       message,
-      idChatRoom,
+      chat_room_id,
     };
 
     socket.emit("message", data);
