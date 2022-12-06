@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 type ChatRoom = Document & {
   users: string[];
-  chat_room_id: String;
+  chat_room_id: string;
 };
 
 const ChatRoomSchema = new Schema(

@@ -1,6 +1,7 @@
 import { container } from "tsyringe";
 import { io } from "../http";
 import { CreateChatRoomService } from "../services/create-chat-room.service";
+import { CreateMessageService } from "../services/create-message.service";
 import { CreateUserService } from "../services/create-user.service";
 import { GetAllUsersService } from "../services/get-all-users.service";
 import { GetChatRoomByUsersService } from "../services/get-chat-room-by-users.service";
@@ -76,7 +77,36 @@ io.on("connect", (socket) => {
       });
     }
 
-    console.log(room);
+    /**
+     * Para unir os usuários em uma sala.
+     */
+    socket.join(room.chat_room_id);
+
     callback(room);
+  });
+
+  socket.on("message", async (data) => {
+    const getUserBySocketIdService = container.resolve(
+      GetUserBySocketIdService
+    );
+    const createMessageService = container.resolve(CreateMessageService);
+
+    const user = await getUserBySocketIdService.execute({
+      socket_id: socket.id,
+    });
+
+    const message = await createMessageService.execute({
+      to: user._id,
+      text: data.message,
+      room_id: data.idChatRoom,
+    });
+
+    /**
+     * Para enviar a mensagem para os demais usuários da conexão.
+     */
+    io.to(data.idChatRoom).emit("message", {
+      message,
+      user,
+    });
   });
 });
