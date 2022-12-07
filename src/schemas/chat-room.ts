@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto";
 import mongoose, { Document, Schema } from "mongoose";
+import { User } from "./user";
 
 type ChatRoom = Document & {
-  users: string[];
+  users: User[];
   chat_room_id: string;
 };
 
